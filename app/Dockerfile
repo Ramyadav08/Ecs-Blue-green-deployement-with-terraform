@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 
-ENV DEPLOYMENT_COLOR=green
+ENV DEPLOYMENT_COLOR=blue
 
 ###
 EXPOSE 5000
