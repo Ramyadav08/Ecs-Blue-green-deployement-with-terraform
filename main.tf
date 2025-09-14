@@ -42,46 +42,46 @@ module "alb" {
 }
 
 
-# module "ecs" {
-#   source                      = "./modules/ECS"
-#   project_name                = var.project_name
-#   private_subnets             = module.vpc.private_subnets
-#   vpc_id                      = module.vpc.vpc_id
-#   ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
-#   image_url                   = var.image_url
-#   container_name              = var.container_name
-#   desired_count               = var.desired_count
-#   region                      = var.region
-#   tags                        = local.default_tags
-#   blue_target_group_arn       = module.alb.blue_target_group_arn
-#   ecs_service_sg_id           = module.sg.ecs_sg_id
+module "ecs" {
+  source                      = "./modules/ECS"
+  project_name                = var.project_name
+  private_subnets             = module.vpc.private_subnets
+  vpc_id                      = module.vpc.vpc_id
+  ecs_task_execution_role_arn = module.iam.ecs_task_execution_role_arn
+  image_url                   = var.image_url
+  container_name              = var.container_name
+  desired_count               = var.desired_count
+  region                      = var.region
+  tags                        = local.default_tags
+  blue_target_group_arn       = module.alb.blue_target_group_arn
+  ecs_service_sg_id           = module.sg.ecs_sg_id
 
-# }
+}
 
-# module "asg" {
-#     source       = "./modules/ASG"
-#     project_name = var.project_name
-#     vpc_id       = module.vpc.vpc_id
-#     ecs_sg_id    = module.sg.ecs_sg_id
-#     ecs_instance_profile_name = module.iam.ecs_instance_profile
-#     ecs_ami_id   = var.ecs_ami_id
-#     instance_type = var.instance_type
-#     ssh_key_name = var.ssh_key_name
-#     asg_max_size = var.asg_max_size
-#     asg_min_size = var.asg_min_size
-#     asg_desired_capacity = var.asg_desired_capacity
-#     tags         = local.default_tags
-#     private_subnets = module.vpc.private_subnets
-#     ecs_cluster_name = module.ecs.ecs_cluster_name
+module "asg" {
+    source       = "./modules/ASG"
+    project_name = var.project_name
+    vpc_id       = module.vpc.vpc_id
+    ecs_sg_id    = module.sg.ecs_sg_id
+    ecs_instance_profile_name = module.iam.ecs_instance_profile
+    ecs_ami_id   = var.ecs_ami_id
+    instance_type = var.instance_type
+    ssh_key_name = var.ssh_key_name
+    asg_max_size = var.asg_max_size
+    asg_min_size = var.asg_min_size
+    asg_desired_capacity = var.asg_desired_capacity
+    tags         = local.default_tags
+    private_subnets = module.vpc.private_subnets
+    ecs_cluster_name = module.ecs.ecs_cluster_name
   
-# }
+}
 
-# module "cloudlog" {
-#     source       = "./modules/CLOUDWATCHLOG"
-#     project_name = var.project_name
+module "cloudlog" {
+    source       = "./modules/CLOUDWATCHLOG"
+    project_name = var.project_name
     
   
-# }
+}
 
 
 # module "codedeploy" {
