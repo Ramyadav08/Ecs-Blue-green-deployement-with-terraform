@@ -8,6 +8,7 @@ on:
       - 'provider.tf'
       - 'terraform.tfvars'
       - 'modules/**'
+      - '.github/workflows/infra.yaml'
 
 jobs:
   terraform:
