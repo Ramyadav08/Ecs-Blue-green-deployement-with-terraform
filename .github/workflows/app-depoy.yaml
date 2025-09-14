@@ -57,6 +57,7 @@ jobs:
 
           echo "TASK_DEFINITION_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
 
+  
       - name: Trigger ECS Blue/Green Deployment
         run: |
           aws deploy create-deployment \
