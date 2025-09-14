@@ -63,5 +63,6 @@ jobs:
           aws deploy create-deployment \
             --application-name ${PROJECT_NAME}-codedeploy-app \
             --deployment-group-name ${PROJECT_NAME}-deployment-group \
-            --revision "{\"revisionType\":\"AppSpecContent\",\"appSpecContent\":{\"version\":\"0.0\",\"Resources\":[{\"TargetService\":{\"Type\":\"AWS::ECS::Service\",\"Properties\":{\"TaskDefinition\":\"${TASK_DEFINITION_ARN}\",\"LoadBalancerInfo\":{\"ContainerName\":\"${CONTAINER_NAME}\",\"ContainerPort\":5000}}}}]}}" \
+            --revision "{\"revisionType\":\"AppSpecContent\",\"appSpecContent\":{\"content\":\"version: 0.0\nResources:\n  - TargetService:\n      Type: AWS::ECS::Service\n      Properties:\n        TaskDefinition: ${TASK_DEFINITION_ARN}\n        LoadBalancerInfo:\n          ContainerName: ${CONTAINER_NAME}\n          ContainerPort: 5000\"}}" \
             --description "Deploy latest Docker image"
+
