@@ -1,0 +1,6 @@
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.hcl
+.terraform/
+ram-key.pem
+.terraform.lock.hcl

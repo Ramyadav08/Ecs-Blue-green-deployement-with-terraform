@@ -1,0 +1,55 @@
+name: ECS App Deployment
+
+on:
+  push:
+    paths:
+      - 'app/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: ap-south-1
+      PROJECT_NAME: bluegreen
+      ECR_REPO: pythonbluegreen
+      TF_DIR: .
+      IMAGE_TAG: latest
+      CONTAINER_NAME: pythonbluegreen
+      IMAGE_URL: 628835453448.dkr.ecr.ap-south-1.amazonaws.com/pythonbluegreen:latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build & Push Docker Image
+        run: |
+          docker build -t $ECR_REPO:$IMAGE_TAG ./app
+          docker tag $ECR_REPO:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPO:$IMAGE_TAG
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPO:$IMAGE_TAG
+
+      - name: Update ECS Task Definition
+        run: |
+          NEW_IMAGE="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPO:$IMAGE_TAG"
+          terraform apply -auto-approve \
+            -var="image_url=$NEW_IMAGE" \
+            -var="project_name=${{ env.PROJECT_NAME }}" \
+            -var="container_name=${{ env.CONTAINER_NAME }}" \
+            -var="desired_count=1" \
+            -var="region=${{ env.AWS_REGION }}"
+
+      - name: Trigger ECS Blue/Green Deployment
+        run: |
+          aws deploy create-deployment \
+            --application-name ${PROJECT_NAME}-codedeploy-app \
+            --deployment-group-name ${PROJECT_NAME}-deployment-group \
+            --description "Deploy latest Docker image"
