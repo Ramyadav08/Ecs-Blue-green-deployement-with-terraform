@@ -76,6 +76,7 @@ resource "aws_ecs_task_definition" "this" {
   tags = merge(var.tags, {
     Name = "${var.project_name}-task"
   })
+
 }
 
 # ECS Service with ALB blue/green
@@ -107,6 +108,11 @@ resource "aws_ecs_service" "this" {
   }
 
   depends_on = [aws_ecs_task_definition.this]
+  lifecycle {
+    ignore_changes = [
+      task_definition
+    ]
+  }
 
   tags = merge(var.tags, {
     Name = "${var.project_name}-ecs-service"
