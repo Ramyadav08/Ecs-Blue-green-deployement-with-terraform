@@ -84,15 +84,15 @@ module "cloudlog" {
 }
 
 
-# module "codedeploy" {
-#   source            = "./modules/CODE-DEPLOY"
-#   project_name      = var.project_name
-#   ecs_cluster_name  = module.ecs.ecs_cluster_name
-#   ecs_service_name  = module.ecs.ecs_service_name
-#   codedeploy_role_arn    = module.iam.codedeploy_role_arn
-#   blue_target_group_name = module.alb.blue_target_group_name
-#   green_target_group_name = module.alb.green_target_group_name
-#   alb_listener_arn = module.alb.alb_listener_arn
-#   tags                  = local.default_tags
+module "codedeploy" {
+  source            = "./modules/CODE-DEPLOY"
+  project_name      = var.project_name
+  ecs_cluster_name  = module.ecs.ecs_cluster_name
+  ecs_service_name  = module.ecs.ecs_service_name
+  codedeploy_role_arn    = module.iam.codedeploy_role_arn
+  blue_target_group_name = module.alb.blue_target_group_name
+  green_target_group_name = module.alb.green_target_group_name
+  alb_listener_arn = module.alb.alb_listener_arn
+  tags                  = local.default_tags
   
-# }
+}
