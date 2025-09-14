@@ -39,19 +39,31 @@ jobs:
           docker tag $ECR_REPO:$IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPO:$IMAGE_TAG
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPO:$IMAGE_TAG
 
-      # - name: Update ECS Task Definition
-      #   run: |
-      #     NEW_IMAGE="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPO:$IMAGE_TAG"
-      #     terraform apply -auto-approve \
-      #       -var="image_url=$NEW_IMAGE" \
-      #       -var="project_name=${{ env.PROJECT_NAME }}" \
-      #       -var="container_name=${{ env.CONTAINER_NAME }}" \
-      #       -var="desired_count=1" \
-      #       -var="region=${{ env.AWS_REGION }}"
+      - name: Update ECS Task Definition
+        run: |
+          NEW_IMAGE="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPO:$IMAGE_TAG"
+          terraform apply -auto-approve \
+            -var="image_url=$NEW_IMAGE" \
+            -var="project_name=${{ env.PROJECT_NAME }}" \
+            -var="container_name=${{ env.CONTAINER_NAME }}" \
+            -var="desired_count=1" \
+            -var="region=${{ env.AWS_REGION }}"
+            
 
-      # - name: Trigger ECS Blue/Green Deployment
-      #   run: |
-      #     aws deploy create-deployment \
-      #       --application-name ${PROJECT_NAME}-codedeploy-app \
-      #       --deployment-group-name ${PROJECT_NAME}-deployment-group \
-      #       --description "Deploy latest Docker image"
+      - name: Get Latest ECS Task Definition ARN
+        id: taskdef
+        run: |
+          TASK_DEF_ARN=$(aws ecs describe-services \
+            --cluster ${PROJECT_NAME}-ecs-cluster \
+            --services ${PROJECT_NAME}-ecs-service \
+            --query "services[0].taskDefinition" \
+            --output text)
+          echo "TASK_DEFINITION_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
+
+      - name: Trigger ECS Blue/Green Deployment
+        run: |
+          aws deploy create-deployment \
+            --application-name ${PROJECT_NAME}-codedeploy-app \
+            --deployment-group-name ${PROJECT_NAME}-deployment-group \
+            --revision "{\"revisionType\":\"AppSpecContent\",\"appSpecContent\":{\"version\":\"0.0\",\"Resources\":[{\"TargetService\":{\"Type\":\"AWS::ECS::Service\",\"Properties\":{\"TaskDefinition\":\"${TASK_DEFINITION_ARN}\",\"LoadBalancerInfo\":{\"ContainerName\":\"${CONTAINER_NAME}\",\"ContainerPort\":5000}}}}]}}" \
+            --description "Deploy latest Docker image"
