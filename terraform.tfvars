@@ -7,7 +7,7 @@ container_name = "pythonbluegreen"
 desired_count  = 1
 
 ecs_ami_id           = "ami-099e6eee4720726e1" 
-instance_type        = "t3.medium"
+instance_type        = "t2.small"
 ssh_key_name         = "ram-key"
 asg_max_size         = 2
 asg_min_size         = 1
