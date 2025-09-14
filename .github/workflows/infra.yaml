@@ -44,4 +44,4 @@ jobs:
         run: terraform plan -var="image_url=${{ vars.IMAGE_URL }}" -out=tfplan
 
       - name: Terraform Apply
-        run: terraform apply -var="image_url=${{ vars.IMAGE_URL }}"  --auto-approve tfplan
+        run: terraform apply   --auto-approve tfplan
