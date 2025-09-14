@@ -45,7 +45,7 @@ resource "aws_autoscaling_group" "ecs_asg" {
   instance_refresh {
     strategy = "Rolling"
     preferences {
-      min_healthy_percentage = 80
+      min_healthy_percentage = 0
       instance_warmup        = 300
     }
     triggers = ["launch_template"]
