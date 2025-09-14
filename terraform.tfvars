@@ -3,7 +3,6 @@ project_name = "bluegreen"
 environment  = "dev"
 vpc_cidr     = "10.0.0.0/16"
 ecr_repos    = ["pythonbluegreen"]
-image_url = "628835453448.dkr.ecr.ap-south-1.amazonaws.com/pythonbluegreen:latest"
 container_name = "pythonbluegreen"
 desired_count  = 1
 

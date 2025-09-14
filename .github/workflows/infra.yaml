@@ -41,7 +41,7 @@ jobs:
         run: terraform fmt 
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
+        run: terraform plan -var="image_url=${{ vars.IMAGE_URL }}" -out=tfplan
 
       - name: Terraform Apply
-        run: terraform apply  tfplan
+        run: terraform apply -var="image_url=${{ vars.IMAGE_URL }}"  --auto-approve tfplan
