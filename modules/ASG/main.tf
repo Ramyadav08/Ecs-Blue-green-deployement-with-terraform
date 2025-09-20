@@ -28,7 +28,7 @@ resource "aws_launch_template" "ecs_lt" {
 
 
 resource "aws_autoscaling_group" "ecs_asg" {
-  name                = "${var.project_name}-ecs-asg1"
+  name                = "${var.project_name}-ecs-asg"
   vpc_zone_identifier = var.private_subnets
   max_size            = var.asg_max_size
   min_size            = var.asg_min_size
