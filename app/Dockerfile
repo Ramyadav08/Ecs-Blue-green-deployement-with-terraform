@@ -16,7 +16,7 @@ COPY . .
 
 ENV DEPLOYMENT_COLOR=green
 
-####
+######
 EXPOSE 5000
 
 
